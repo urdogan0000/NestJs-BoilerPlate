@@ -74,7 +74,7 @@ import { QueueModule } from './common/queue/queue.module';
               winston.format.printf((info) => {
                 let { timestamp, level, message, context } = info;
                 if (!context) {
-                  context = 'LDAP Service';
+                  context = 'UnkonwnContext';
                 }
                 return `${timestamp} [${level}] [${context['context'] || context || 'UnknownContext'}]: ${message}`;
               }),
