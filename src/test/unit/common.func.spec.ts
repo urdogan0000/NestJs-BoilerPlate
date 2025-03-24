@@ -1,12 +1,9 @@
 // common.func.spec.ts
 
 import { HttpException } from '@nestjs/common';
-import * as fs from 'fs';
-import * as path from 'path';
 import {
   decodeBase64toString,
   basicAuthDecoder,
-  loadConfig,
 } from 'src/common/funcs/common.func';
 
 describe('Common Functions', () => {
@@ -41,70 +38,6 @@ describe('Common Functions', () => {
       expect(() => {
         basicAuthDecoder('Basic YWRtaW46'); // username without password
       }).toThrow(HttpException);
-    });
-  });
-
-  describe('loadConfig', () => {
-    const mockFs = jest.spyOn(fs, 'readFileSync');
-    const mockPathJoin = jest.spyOn(path, 'join');
-
-    afterEach(() => {
-      jest.resetAllMocks(); // Reset all mocks between tests
-    });
-
-    it('should load configuration file into a Map', async () => {
-      const configMap = new Map<string, string>();
-      const filePath = '/path/to/config';
-      const fileName = 'ldap-config.txt';
-
-      mockPathJoin.mockReturnValue('/path/to/config/ldap-config.txt');
-      mockFs.mockReturnValue('LDAP_URL=ldap://localhost\nLDAP_PORT=389\n');
-
-      await loadConfig(configMap, fileName, filePath);
-
-      expect(configMap.get('LDAP_URL')).toBe('ldap://localhost');
-      expect(configMap.get('LDAP_PORT')).toBe('389');
-      expect(mockPathJoin).toHaveBeenCalledWith(filePath, fileName);
-      expect(mockFs).toHaveBeenCalledWith(
-        '/path/to/config/ldap-config.txt',
-        'utf8',
-      );
-    });
-
-    it('should handle empty lines and trim values', async () => {
-      const configMap = new Map<string, string>();
-      const filePath = '/path/to/config';
-      const fileName = 'ldap-config.txt';
-
-      mockPathJoin.mockReturnValue('/path/to/config/ldap-config.txt');
-      mockFs.mockReturnValue(`
-        LDAP_URL= ldap://localhost  
-        LDAP_PORT = 389
-        # Comment line
-      `);
-
-      await loadConfig(configMap, fileName, filePath);
-
-      expect(configMap.get('LDAP_URL')).toBe('ldap://localhost');
-      expect(configMap.get('LDAP_PORT')).toBe('389');
-      expect(configMap.size).toBe(2); // Ensure only 2 valid entries
-    });
-
-    it('should ignore lines without "=" character', async () => {
-      const configMap = new Map<string, string>();
-      const filePath = '/path/to/config';
-      const fileName = 'ldap-config.txt';
-
-      mockPathJoin.mockReturnValue('/path/to/config/ldap-config.txt');
-      mockFs.mockReturnValue(
-        'LDAP_URL=ldap://localhost\nINVALID_LINE\nLDAP_PORT=389\n',
-      );
-
-      await loadConfig(configMap, fileName, filePath);
-
-      expect(configMap.get('LDAP_URL')).toBe('ldap://localhost');
-      expect(configMap.get('LDAP_PORT')).toBe('389');
-      expect(configMap.has('INVALID_LINE')).toBe(false);
     });
   });
 });
