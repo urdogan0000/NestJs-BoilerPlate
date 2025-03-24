@@ -14,7 +14,7 @@ export default function () {
 
   // Define headers, including the Authorization header
   const headers = {
-    Authorization: 'ahenk04:95ce64b2-69a9-3c4e-8e2e-ab244acfdd99',
+    Authorization: 'test112:test12312',
   };
 
   // Send the GET request with the headers

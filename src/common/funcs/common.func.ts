@@ -1,6 +1,4 @@
 import { HttpException } from '@nestjs/common';
-import * as fs from 'fs';
-import * as path from 'path';
 import { Request } from 'express';
 
 /**
@@ -45,36 +43,6 @@ export function basicAuthDecoder(input: string): {
     username: username.trim(),
     password: password.trim(),
   };
-}
-
-/**
- * Reads configuration from a text file and loads it into a Map.
- * Each line in the file should be in the format of "key=value".
- *
- * @param configMap The Map to store the configuration values.
- * @param txtFileName The name of the text file containing the configuration.
- * @param txtFilePath The optional path to the directory where the text file is located.
- * @throws {Error} If the file cannot be read or the format is incorrect.
- */
-export async function loadConfig(
-  configMap: Map<string, string>,
-  txtFileName: string,
-  txtFilePath?: string,
-): Promise<void> {
-  const configPath = path.join(txtFilePath, txtFileName);
-  const data = fs.readFileSync(configPath, 'utf8');
-  const lines = data.split('\n').filter((line) => line.trim());
-
-  lines.forEach((line) => {
-    const indexOfEqual = line.indexOf('=');
-    if (indexOfEqual > -1) {
-      const key = line.substring(0, indexOfEqual).trim();
-      const value = line.substring(indexOfEqual + 1).trim();
-      if (key && value) {
-        configMap.set(key, value);
-      }
-    }
-  });
 }
 
 /**
