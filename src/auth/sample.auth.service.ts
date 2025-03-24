@@ -23,7 +23,7 @@ export class SampleAuthService implements AuthenticationInterface {
     let passwordHash = password; // Replace this with the actual password hash
     this.logger.log(
       `Authenticating user ${username}...  HashPassword: ${passwordHash}`,
-    );
+    ); //for sample log please delete before productions
     return true;
   }
 }
